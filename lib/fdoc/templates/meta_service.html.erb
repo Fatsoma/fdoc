@@ -30,20 +30,6 @@
           <% end %>
         </ul>
 
-        <%= tag_with_anchor('h2', 'Endpoints') %>
-
-        <% endpoints.each do |endpoint_ary| %>
-          <%= tag_with_anchor('h3', endpoint_ary.first.prefix) %>
-
-          <ul>
-          <% endpoint_ary.each do |endpoint| %>
-            <li>
-              <%= endpoint.name_as_link %>
-            </li>
-          <% end %>
-          </ul>
-        <% end %>
-
         <% if discussion %>
           <%= tag_with_anchor('h2', 'Discussion') %>
           <%= discussion %>
