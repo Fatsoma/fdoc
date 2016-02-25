@@ -20,9 +20,15 @@ class Fdoc::BasePresenter
     template.result(binding)
   end
 
-  def render_markdown(markdown_str)
+  def render_markdown(markdown_str, options = {:render_as_span => false})
     if markdown_str
-      Kramdown::Document.new(markdown_str, :entity_output => :numeric).to_html
+      doc = Kramdown::Document.new(markdown_str, :entity_output => :numeric)
+      if options[:render_as_span]
+        first_child = doc.root.children.first
+        first_child.type = :html_element
+        first_child.value = :span
+      end
+      doc.to_html
     else
       nil
     end

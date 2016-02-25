@@ -179,8 +179,9 @@ class Fdoc::SchemaPresenter < Fdoc::BasePresenter
             tags.puts " "
             tags.tag(:span, "#{schema.type_html}", :class => 'type') if schema.type_html
           end
+          schema_description = render_markdown(schema.description, :render_as_span => true)
 
-          list.puts(tag_with_anchor('span', "<tt>#{key}</tt> - #{render_markdown(schema.description)} #{tags}", schema_slug(key, property)))
+          list.puts(tag_with_anchor('span', "<tt>#{key}</tt> - #{schema_description} #{tags}", schema_slug(key, property)))
           list.puts(schema.to_html)
         end
       end
