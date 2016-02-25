@@ -18,17 +18,10 @@ html_options = {
 }
 
 def mkdir(dirname)
-  `mkdir -p "#{dirname}"` unless File.directory?(dirname)
-end
-
-def cp(from, to)
-  `cp "#{from}" "#{to}"`
-  puts "created #{from}"
+  `mkdir -p #{dirname}` unless File.directory?(dirname)
 end
 
 mkdir(html_directory)
-
-FDOC_DIRECTORY = fdoc_directory
 
 meta_service = Fdoc::MetaService.new(fdoc_directory)
 services = if !meta_service.empty?
@@ -50,8 +43,9 @@ if !meta_service.empty?
   end
 end
 
-cp(File.join(File.dirname(__FILE__), '../lib/fdoc/templates/application.css'), html_directory)
-cp(File.join(File.dirname(__FILE__), '../lib/fdoc/templates/application.js'), html_directory)
+css_path = File.join(File.dirname(__FILE__), '../lib/fdoc/templates/styles.css')
+`cp "#{css_path}" "#{html_directory}"`
+puts "created #{File.expand_path(css_path)}"
 
 services.each do |service|
   service_presenter = Fdoc::ServicePresenter.new(service, html_options)
@@ -60,7 +54,7 @@ services.each do |service|
   else
     File.join(html_directory, service_presenter.slug_name)
   end
-
+  
   mkdir(html_sub_directory)
 
   index_html_path = File.join(html_sub_directory, "index.html")
