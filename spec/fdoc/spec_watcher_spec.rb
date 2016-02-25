@@ -2,7 +2,7 @@ require 'spec_helper'
 
 require 'fdoc/spec_watcher'
 
-describe Fdoc::SpecWatcher do
+describe Fdoc::SpecWatcher, :fdoc => 'index' do
 
   context "on rails" do
     before do
