@@ -2,7 +2,7 @@ require 'spec_helper'
 
 require 'fdoc/spec_watcher'
 
-describe Fdoc::SpecWatcher do
+describe Fdoc::SpecWatcher, :fdoc => 'index' do
 
   context "on rails" do
     before do
@@ -25,16 +25,12 @@ describe Fdoc::SpecWatcher do
     end
 
     it 'should verify when params are a hash' do
-      Fdoc::Service.should_receive(:verify!).with do |*args|
-        args[2] == {:id => 1}
-      end
+      Fdoc::Service.should_receive(:verify!).with(anything, anything, {:id => 1}, anything, anything, anything)
       @klass.get(:index, {:id => 1})
     end
 
     it 'should verify when params are JSON' do
-      Fdoc::Service.should_receive(:verify!).with do |*args|
-        args[2] == {'id' => 1}
-      end
+      Fdoc::Service.should_receive(:verify!).with(anything, anything, {'id' => 1}, anything, anything, anything)
       @klass.get(:index, {:id => 1}.to_json)
     end
   end
@@ -61,16 +57,12 @@ describe Fdoc::SpecWatcher do
     end
 
     it 'should verify when params are a hash' do
-      Fdoc::Service.should_receive(:verify!).with do |*args|
-        args[2] == {:id => 1}
-      end
+      Fdoc::Service.should_receive(:verify!).with(anything, anything, {:id => 1}, anything, anything, anything)
       @klass.get("/", {:id => 1})
     end
 
     it 'should verify when params are JSON' do
-      Fdoc::Service.should_receive(:verify!).with do |*args|
-        args[2] == {'id' => 1}
-      end
+      Fdoc::Service.should_receive(:verify!).with(anything, anything, {'id' => 1}, anything, anything, anything)
       @klass.get("/", {:id => 1}.to_json)
     end
   end
