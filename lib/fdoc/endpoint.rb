@@ -9,24 +9,15 @@ class Fdoc::Endpoint
 
   def initialize(endpoint_path, service=Fdoc::Service.default_service)
     @endpoint_path = endpoint_path
-    @schema = IncludeBuilder.new(@endpoint_path).schema
     @service = service
-  end
-
-  def origin_dir
-    @_origin_dir ||=
-      if service.meta_service
-        service.meta_service.meta_service_dir
-      else
-        service.service_dir
-      end
+    @schema = IncludeBuilder.new(@endpoint_path, origin_dir).schema
   end
 
   class IncludeBuilder
 
     attr_reader :schema
 
-    def initialize(path)
+    def initialize(path, origin_dir)
       @path = path
 
       begin
@@ -35,7 +26,7 @@ class Fdoc::Endpoint
         i, includes = 0, {}
         contents = contents.gsub(/\[(\/[^\]]*)\]/) do
           i += 1
-          content = IncludeBuilder.new("#{FDOC_DIRECTORY}#{$1}").schema
+          content = IncludeBuilder.new("#{origin_dir}#{$1}", origin_dir).schema
           raise "Include: #{$1} is empty!" if content.nil?
           includes[i.to_s] = content
           "include_#{i}"
@@ -199,5 +190,16 @@ class Fdoc::Endpoint
     when Array then obj.map { |v| stringify_keys(v) }
     else obj
     end
+  end
+
+  private
+
+  def origin_dir
+    @_origin_dir ||=
+      if service.meta_service
+        service.meta_service.meta_service_dir
+      else
+        service.service_dir
+      end
   end
 end
