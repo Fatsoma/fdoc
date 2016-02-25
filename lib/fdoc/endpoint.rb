@@ -13,6 +13,15 @@ class Fdoc::Endpoint
     @service = service
   end
 
+  def origin_dir
+    @_origin_dir ||=
+      if service.meta_service
+        service.meta_service.meta_service_dir
+      else
+        service.service_dir
+      end
+  end
+
   class IncludeBuilder
 
     attr_reader :schema
