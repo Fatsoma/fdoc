@@ -2,7 +2,7 @@ require 'json'
 
 module Fdoc
   module SpecWatcher
-    VERBS = [:get, :post, :put, :delete]
+    VERBS = [:get, :post, :put, :patch, :delete]
 
     VERBS.each do |verb|
       define_method(verb) do |*params|
@@ -35,7 +35,7 @@ module Fdoc
     end
 
     def path
-      if RSpec.respond_to?(:current_example) # RSpec 3
+      if RSpec.respond_to?(:current_example) # Rspec 3
         RSpec.current_example.metadata[:fdoc]
       elsif respond_to?(:example) # Rspec 2
         example.metadata[:fdoc]

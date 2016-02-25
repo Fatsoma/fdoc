@@ -1,6 +1,6 @@
-# An HtmlPresenter for a JSON Schema fragment. Like most JSON
+# An BasePresenter for a JSON Schema fragment. Like most JSON
 # schema things, has a tendency to recurse.
-class Fdoc::SchemaPresenter < Fdoc::HtmlPresenter
+class Fdoc::SchemaPresenter < Fdoc::BasePresenter
   FORMATTED_KEYS = %w(
     description
     type
@@ -76,6 +76,43 @@ class Fdoc::SchemaPresenter < Fdoc::HtmlPresenter
     end
   end
 
+  def to_markdown(prefix = "")
+    md = StringIO.new
+    md << 'Deprecated' if deprecated?
+    unformatted_keys.each do |key|
+      md << "\n#{prefix}* #{key} #{@schema[key]}"
+    end
+    md << "\n#{@schema['enum']}"
+    if items = @schema["items"]
+      md << "\n#{prefix}* Items"
+      if items.kind_of?(Array)
+        items.compact.each do |item|
+          md << Fdoc::SchemaPresenter.new(item, options.merge(:nested => true)).to_markdown(prefix + "\t")
+        end
+      else
+        md << Fdoc::SchemaPresenter.new(@schema["items"], options.merge(:nested => true)).to_markdown(prefix + "\t")
+      end
+    end
+    if properties = @schema["properties"]
+      properties.each do |key, property|
+        next if property.nil?
+
+        schema = Fdoc::SchemaPresenter.new(property, options.merge(:nested => true))
+
+        tags = []
+        tags << schema.description if schema.description
+        tags << '_required_' if schema.nested? && schema.required?
+        tags << "_#{format}_" if schema.format
+        tags << "_#{schema.type_html}_" if schema.type_html
+        tags_string = tags.empty? ? '' : ' ' + tags.join(' ')
+
+        md << "\n#{prefix}* __#{key}__:#{tags_string}"
+        md << schema.to_markdown(prefix + "\t")
+      end
+    end
+    md.string
+  end
+
   def type_html
     if type.kind_of?(Array)
       html do |output|
@@ -134,7 +171,7 @@ class Fdoc::SchemaPresenter < Fdoc::HtmlPresenter
 
         schema = self.class.new(property, options.merge(:nested => true))
 
-        output.tag(:li) do |t|
+        output.tag(:li) do |list|
           tags = html do |tags|
             tags.tag(:span, "required", :class => 'required') if schema.nested? && schema.required?
             tags.puts " "
@@ -143,11 +180,10 @@ class Fdoc::SchemaPresenter < Fdoc::HtmlPresenter
             tags.tag(:span, "#{schema.type_html}", :class => 'type') if schema.type_html
           end
 
-          t.puts(tag_with_anchor('span', "<tt>%s</tt> - #{schema.description} #{tags}" % key, schema_slug(key, property)))
-          t.puts(schema.to_html)
+          list.puts(tag_with_anchor('span', "<tt>#{key}</tt> - #{render_markdown(schema.description)} #{tags}", schema_slug(key, property)))
+          list.puts(schema.to_html)
         end
       end
     end
   end
-
 end

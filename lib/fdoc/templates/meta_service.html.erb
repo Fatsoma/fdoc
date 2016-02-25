@@ -2,6 +2,7 @@
 <html>
   <head>
     <title><%= @meta_service.name %></title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
     <link rel="stylesheet" type="text/css" href="<%= css_path %>" />
   </head>
   <body>
@@ -37,7 +38,9 @@
           <ul>
           <% endpoint_ary.each do |endpoint| %>
             <li>
-              <%= endpoint.name_as_link %>
+              <a href="<%= endpoint.url %>">
+                <%= render_erb("shared/endpoint_name.html.erb", endpoint.get_binding) %>
+              </a>
             </li>
           <% end %>
           </ul>

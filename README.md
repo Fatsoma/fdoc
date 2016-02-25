@@ -24,6 +24,12 @@ Tell fdoc where to look for `.fdoc` files. By default, fdoc will look in `docs/f
 require 'fdoc'
 
 Fdoc.service_path = "path/to/your/fdocs"
+
+# Configure how Fdoc decides a successful response
+Fdoc.decide_success_with do |response, status|
+ status.to_i < 400
+end
+
 ```
 
 fdoc is built to work around controller specs in rspec, and provides `Fdoc::SpecWatcher` as a mixin. Make sure to include it *inside* your top level describe.
@@ -40,7 +46,7 @@ end
 To enable fdoc for an endpoint, add the `fdoc` option with the path to the endpoint. fdoc will intercept all calls to `get`, `post`, `put`, and `delete` and verify those parameters accordingly.
 
 ```ruby
-context "#show", :fdoc => 'members/list' do
+context "#show", fdoc: 'members/list' do
   # ...
 end
 ```
@@ -82,11 +88,20 @@ end
 
 ### Outside a Rails App
 
-fdoc provides the `fdoc_to_html` script to transform a directory of `.fdoc` files into more human-readable HTML.
+fdoc provides the `fdoc convert` script to transform a directory of `.fdoc` files into more human-readable HTML.
 
 In this repo, try running:
 
-    bin/fdoc_to_html ./spec/fixtures ./html
+    bin/fdoc convert ./spec/fixtures --output=./html
+
+```
+Options:
+  -o, [--output=OUTPUT]                # Output path
+  -u, [--url-base-path=URL_BASE_PATH]  # URL base path
+  -f, [--format=FORMAT]                # Format in html or markdown, defaults to html
+                                       # Default: html
+  -t, [--templates=TEMPLATES]          # Directory with override templates
+```
 
 ## Example
 
@@ -137,7 +152,7 @@ Our spec file, `spec/controllers/members_controller_spec.rb` looks like:
 require 'fdoc/spec_watcher'
 
 describe MembersController do
-  context "#show", :fdoc => "members/list" do
+  context "#show", fdoc: "members/list" do
     it "can take an offset" do
       get :show, {
         :offset => 5

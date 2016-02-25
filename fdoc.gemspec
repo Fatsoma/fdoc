@@ -15,6 +15,8 @@ Gem::Specification.new do |s|
   s.summary = "A tool for documenting API endpoints."
   s.homepage = "http://github.com/square/fdoc"
 
+  s.license = "Apache 2.0"
+
   s.rdoc_options = ["--charset=UTF-8"]
   s.extra_rdoc_files = [
     "README.md"
@@ -23,14 +25,16 @@ Gem::Specification.new do |s|
   s.files = Dir['{lib,spec}/**/*'] + %w(fdoc.gemspec Rakefile README.md Gemfile)
   s.test_files = Dir['spec/**/*']
   s.bindir        = "bin"
-  s.executables  << "fdoc_to_html"
+  s.executables  << "fdoc"
 
   s.add_dependency("json")
-  s.add_dependency("json-schema", "< 2.0.0")
+  s.add_dependency("json-schema", "~> 1.1")
   s.add_dependency("kramdown")
+  s.add_dependency("thor")
 
   s.add_development_dependency("rake")
   s.add_development_dependency("rspec", "~> 2.5")
   s.add_development_dependency("nokogiri")
   s.add_development_dependency("cane")
+  s.add_development_dependency("guard-rspec")
 end
