@@ -45,7 +45,7 @@ if !meta_service.empty?
   end
 end
 
-css_path = File.join(File.dirname(__FILE__), '../lib/fdoc/templates/application.css')
+css_path = File.join(File.dirname(__FILE__), '../lib/fdoc/templates/styles.css')
 `cp "#{css_path}" "#{html_directory}"`
 puts "created #{File.expand_path(css_path)}"
 
