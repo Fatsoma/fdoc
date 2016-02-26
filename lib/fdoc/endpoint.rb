@@ -38,7 +38,7 @@ class Fdoc::Endpoint
         replace_includes(@schema, includes)
       rescue => e
         puts "#{e.message} (from #{@path})"
-        exit
+        raise
       end
     end
 
