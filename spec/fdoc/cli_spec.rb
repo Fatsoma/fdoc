@@ -185,7 +185,7 @@ describe Fdoc::Cli do
 
     context "by default" do
       it { should_not have_meta_service }
-      its(:service_presenters) { should have(1).service }
+      it { subject.service_presenters.size.should == 1 }
       its(:output_path) { should =~ /html$/ }
     end
 
@@ -200,7 +200,7 @@ describe Fdoc::Cli do
       before { with_fixture("sample_group.fdoc.meta") }
 
       it { should have_meta_service }
-      its(:service_presenters) { should have(1).service }
+      it { subject.service_presenters.size.should == 1 }
     end
 
     context "when the origin is a directory" do

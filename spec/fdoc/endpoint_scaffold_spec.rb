@@ -22,7 +22,7 @@ describe Fdoc::EndpointScaffold do
     it "creates properties for top-level keys, and populates them with examples" do
       subject.consume_request(request_params, true)
       subject.request_parameters["type"].should == nil
-      subject.request_parameters["properties"].should have(3).keys
+      subject.request_parameters["properties"].keys.size.should == 3
       subject.request_parameters["properties"]["depth"]["type"].should == "integer"
       subject.request_parameters["properties"]["max_connections"]["example"].should == 20
       subject.request_parameters["properties"]["root_node"]["type"].should == "string"
@@ -34,7 +34,7 @@ describe Fdoc::EndpointScaffold do
         "hold_the_lettuce" => true
       }
       subject.consume_request(bool_params)
-      subject.request_parameters["properties"].should have(2).keys
+      subject.request_parameters["properties"].keys.size.should == 2
       subject.request_parameters["properties"]["with_cheese"]["type"].should == "boolean"
       subject.request_parameters["properties"]["hold_the_lettuce"]["type"].should == "boolean"
     end
@@ -46,7 +46,7 @@ describe Fdoc::EndpointScaffold do
           "time_obj" => Time.now
         }
         subject.consume_request(datetime_params)
-        subject.request_parameters["properties"].should have(2).keys
+        subject.request_parameters["properties"].keys.size.should == 2
         subject.request_parameters["properties"]["time_str"]["type"].should == "string"
         subject.request_parameters["properties"]["time_str"]["format"].should == "date-time"
         subject.request_parameters["properties"]["time_obj"]["type"].should == "string"
@@ -58,7 +58,7 @@ describe Fdoc::EndpointScaffold do
           "sample_uri" => "http://my.example.com"
         }
         subject.consume_request(uri_params)
-        subject.request_parameters["properties"].should have(1).keys
+        subject.request_parameters["properties"].keys.size.should == 1
         subject.request_parameters["properties"]["sample_uri"]["type"].should == "string"
         subject.request_parameters["properties"]["sample_uri"]["format"].should == "uri"
       end
@@ -77,7 +77,7 @@ describe Fdoc::EndpointScaffold do
         "with_string" => true
       }
       subject.consume_request(mixed_params)
-      subject.request_parameters["properties"].should have(2).keys
+      subject.request_parameters["properties"].keys.size.should == 2
       subject.request_parameters["properties"].should have_key "with_symbol"
       subject.request_parameters["properties"].should_not have_key :with_symbol
       subject.request_parameters["properties"].should have_key "with_string"
@@ -112,7 +112,7 @@ describe Fdoc::EndpointScaffold do
 
     it "produces a valid JSON schema for the response" do
       subject.consume_request(request_params)
-      subject.request_parameters["properties"].should have(3).keys
+      subject.request_parameters["properties"].keys.size.should == 3
       JSON::Validator.validate!(subject.request_parameters, request_params).should be true
     end
   end
@@ -151,23 +151,23 @@ describe Fdoc::EndpointScaffold do
 
     context "for succesful responses" do
       before(:each) do
-        subject.should have(0).response_codes
+        subject.response_codes.size.should == 0
       end
 
       it "adds response codes" do
         subject.consume_response({}, "200 OK")
-        subject.should have(1).response_codes
+        subject.response_codes.size.should == 1
 
         subject.consume_response({}, "201 Created")
-        subject.should have(2).response_codes
+        subject.response_codes.size.should == 2
       end
 
      it "does not add duplicate response codes" do
         subject.consume_response({}, "200 OK")
-        subject.should have(1).response_codes
+        subject.response_codes.size.should == 1
 
         subject.consume_response({}, "200 OK")
-        subject.should have(1).response_codes
+        subject.response_codes.size.should == 1
 
         subject.response_codes.each do |response|
           response["description"].should == "???"
@@ -210,7 +210,7 @@ describe Fdoc::EndpointScaffold do
           "with_string" => true
         }
         subject.consume_response(mixed_params, "200 OK")
-        subject.response_parameters["properties"].should have(2).keys
+        subject.response_parameters["properties"].keys.size.should == 2
         subject.response_parameters["properties"].should have_key "with_symbol"
         subject.response_parameters["properties"].should_not have_key :with_symbol
         subject.response_parameters["properties"].should have_key "with_string"
@@ -225,11 +225,11 @@ describe Fdoc::EndpointScaffold do
 
     context "for unsuccessful responses" do
       it "adds response codes" do
-        subject.should have(0).response_codes
+        subject.response_codes.size.should == 0
         subject.consume_response({}, "400 Bad Request", false)
-        subject.should have(1).response_codes
+        subject.response_codes.size.should == 1
         subject.consume_response({}, "404 Not Found", false)
-        subject.should have(2).response_codes
+        subject.response_codes.size.should == 2
       end
 
       it "does not modify the response_parameters" do
