@@ -101,6 +101,7 @@ class Fdoc::EndpointScaffold < Fdoc::Endpoint
   def guess_type(value)
     in_type = value.class.to_s
     type_map = {
+      "Integer" => "integer",
       "Fixnum" => "integer",
       "Float" => "number",
       "Hash" => "object",

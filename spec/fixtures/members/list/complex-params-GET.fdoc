@@ -3,7 +3,7 @@ requestParameters:
   properties:
     toplevel_param:
       type: string
-      description: A paramater as normal
+      description: A parameter as normal
       required: yes
     optional_nested_array:
       type: array
