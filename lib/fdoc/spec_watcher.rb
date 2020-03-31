@@ -5,13 +5,14 @@ module Fdoc
     VERBS = [:get, :post, :put, :patch, :delete]
 
     VERBS.each do |verb|
-      define_method(verb) do |*params|
+      m = define_method(verb) do |*params|
         action, request_params = params
 
         super(*params)
 
         check_response(verb, request_params) if path
       end
+      m.ruby2_keywords if m.respond_to?(:ruby2_keywords)
     end
 
     private
